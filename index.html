@@ -48,6 +48,8 @@ Search depth:
 <div id="fen"></div>
 <label>Record:</label>
 <div id="pgn"></div>
+<label>Descriptive Notation:</label>
+<div id="descriptive"></div>
 <br/>
 <div id="move-history" class="move-history">
 <!--- End Example HTML -------------------------------------------------------->
@@ -55,6 +57,7 @@ Search depth:
 <script src="lib/jquery-3.4.1.min.js"></script>
 <script src="lib/Chessboard-min.js"></script>
 <script src="lib/Chess.js"></script>
+<script type="text/javascript" src="lib/ostinato.js"></script>
 <script>
 // --- Begin Example JS --------------------------------------------------------
 var board = null
@@ -69,6 +72,7 @@ var saveFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 var savepgn = $('#pgn')
 var saveStatus = $('#status')
 var saveHistory = null
+var $descriptive = $('#descriptive')
 
 /* Play with other players
 function onDrop (source, target) {
@@ -118,10 +122,32 @@ function updateStatus () {
       status += ', ' + moveColor + ' is in check'
     }
   }
-
   $status.html(status)
   $fen.html(game.fen())
   $pgn.html(game.pgn())
+  var result = ostinato.convertNotation(game.pgn(), "" + "Descriptive Notation", 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+  fullAction = 1
+  halfAction = 0
+  currentAction = 0
+  actionsString = ''
+  for (action in result.action) {
+  /**
+	if (halfAction == 0) {actionsString += fullAction + '. '}
+	halfAction++
+	if (result.validActionCount >= currentAction + 1) {actionsString += result.actions[currentAction]}
+	else {actionsString += '<i>' + result.actions[currentAction] + '</i> '}
+	currentAction++
+            if (halfAction == 2) {
+                halfAction = 0
+                fullAction++
+                actionsString += '</div>'
+            }
+			*/
+	actionsString += action
+  }
+  console.log('actionsString: ')
+  console.log(result.actions)
+  $descriptive.html(result.actions)
 }
 
 function onChange (oldPos, newPos) {
@@ -481,6 +507,7 @@ $('#startBtn').on('click', function () {
   $status.html(status)
   $fen.html(game.fen())
   $pgn.html(game.pgn())
+  $descriptive.html('Descriptive Notation')
 })
 
 $('#clearBtn').on('click', function () {
@@ -503,6 +530,7 @@ $('#setRuyLopezBtn').on('click', function () {
   $status.html(status)
   $fen.html(game.fen())
   $pgn.html(game.pgn())
+  $descriptive.html('Descriptive Notation')
   window.setTimeout(makeBestMove, 250);
 })
 
@@ -542,6 +570,7 @@ $('#startGame').on('click', function () {
   $status.html(status)
   $fen.html(game.fen())
   $pgn.html(game.pgn())
+  $descriptive.html('Descriptive Notation')
 })
 
 $('#saveBoard').on('click', function () {
@@ -563,6 +592,7 @@ $('#loadBoard').on('click', function () {
   $status.html(status)
   $fen.html(game.fen())
   $pgn.html(game.pgn())
+  $descriptive.html('Descriptive Notation')
 })
 updateStatus()
 // --- End Example JS ----------------------------------------------------------
